@@ -54,3 +54,9 @@ GitHub.sublime-settings
 
 # Ignoring data, add with force
 data/
+
+# Created by https://www.gitignore.io/api/ipythonnotebook
+
+### IPythonNotebook ###
+# Temporary data
+.ipynb_checkpoints/
