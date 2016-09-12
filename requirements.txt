@@ -1,2 +1,6 @@
-caravel>=0.10
+matplotlib
+scipy
+numpy
+pandas
 jupyter
+caravel>=0.10
