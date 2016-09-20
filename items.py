@@ -1,14 +1,14 @@
 from datetime import datetime
 
 class ReviewItem:
-    def __init__(self, user_id, item_id, review_id, review_title, rating, rating_perc, rating_date, review_text, site_name, url, batch_id):
+    def __init__(self, user_id, item_id, review_id, review_title, rating, rating_perc, timestamp_rating, review_text, site_name, url, batch_id):
         self.user_id = user_id
         self.item_id = item_id
         self.review_id = review_id
         self.review_title = review_title
         self.rating = rating
         self.rating_perc = float(rating_perc)
-        self.rating_date = datetime.strptime(rating_date, "%Y-%m-%dT%H:%M:%S")
+        self.timestamp_rating = timestamp_rating
         self.review_text = review_text
         self.site_name = site_name
         self.url = url
@@ -21,7 +21,7 @@ def as_review(dct):
     'review_title' in dct and \
     'rating' in dct and \
     'rating_percentage' in dct and \
-    'rating_date' in dct and \
+    'timestamp_rating' in dct and \
     'review_text' in dct and \
     'site_name' in dct and \
     'url' in dct and \
@@ -32,7 +32,7 @@ def as_review(dct):
                          dct['review_title'],
                          dct['rating'],
                          dct['rating_percentage'],
-                         dct['rating_date'],
+                         dct['timestamp_rating'],
                          dct['review_text'],
                          dct['site_name'],
                          dct['url'],
