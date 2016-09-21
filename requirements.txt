@@ -2,4 +2,5 @@ matplotlib
 scipy
 numpy
 pandas
+ggplot
 jupyter
