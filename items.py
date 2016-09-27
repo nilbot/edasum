@@ -65,9 +65,9 @@ def as_hotel(dct):
     else:
         return dct
 
-def get_hoteldesc(url, data=hotels):
+def get_hoteldesc(url, data=None):
     if data is None:
-        raise DataInvalidError('run all cells to get hotels dataset')
-    hotel = hotels.loc[hotels['item_id'] == url]['item_title'].values[0]
+        raise ValueError('input data is none: run all cells to get hotels dataset')
+    hotel = data.loc[data['item_id'] == url]['item_title'].values[0]
     hotel = hotel.strip( '\t\n\r')
     return hotel
