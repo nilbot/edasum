@@ -64,3 +64,10 @@ def as_hotel(dct):
                          dct['batch_id'])
     else:
         return dct
+
+def get_hoteldesc(url, data=hotels):
+    if data is None:
+        raise DataInvalidError('run all cells to get hotels dataset')
+    hotel = hotels.loc[hotels['item_id'] == url]['item_title'].values[0]
+    hotel = hotel.strip( '\t\n\r')
+    return hotel
