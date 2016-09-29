@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PROJECT_ROOT="$HOME/data-vis"
+PROJECT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}"  )" && pwd  )"
 cd $PROJECT_ROOT
 
 if [ ! -d $PROJECT_ROOT/venv/2.7 ]; then
