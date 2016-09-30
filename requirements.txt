@@ -4,3 +4,5 @@ numpy
 pandas
 ggplot
 jupyter
+image
+wordcloud
