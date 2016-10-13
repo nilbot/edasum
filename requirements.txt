@@ -6,3 +6,5 @@ ggplot
 jupyter
 image
 wordcloud
+sklearn
+nltk
