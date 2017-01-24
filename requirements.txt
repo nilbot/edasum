@@ -8,3 +8,4 @@ image
 wordcloud
 sklearn
 nltk
+pycorenlp
