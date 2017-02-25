@@ -39,3 +39,23 @@ def idf_cosine_sim(x, y, world):
 
     g = math.sqrt(e) * math.sqrt(f)
     return d / g
+
+
+def lexrank_world(world):
+
+    from sumy.parsers.plaintext import PlaintextParser
+    from sumy.nlp.tokenizers import Tokenizer
+    from sumy.summarizers.lex_rank import LexRankSummarizer as Summarizer
+    from sumy.nlp.stemmers import Stemmer
+    from sumy.utils import get_stop_words
+
+    LANGUAGE = 'english'
+    SENTENCES_COUNT = 5
+    parser = PlaintextParser.from_string(world, Tokenizer(LANGUAGE))
+    stemmer = Stemmer(LANGUAGE)
+
+    summarizer = Summarizer(stemmer)
+    summarizer.stop_words = get_stop_words(LANGUAGE)
+
+    for sent in summarizer(parser.document, SENTENCES_COUNT):
+        print(sent)

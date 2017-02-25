@@ -1,6 +1,6 @@
 matplotlib
 scipy
-numpy
+numpy>=1.6.1
 pandas
 ggplot
 jupyter
@@ -9,3 +9,5 @@ wordcloud
 sklearn
 nltk
 pycorenlp
+sumy>=0.5.1
+re2
