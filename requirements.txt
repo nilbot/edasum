@@ -10,4 +10,3 @@ sklearn
 nltk
 pycorenlp
 sumy>=0.5.1
-re2

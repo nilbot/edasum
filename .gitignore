@@ -158,7 +158,4 @@ ENV/
 share/
 
 # ignore raw text files
-dataset/**
-!dataset/**/README*
-!dataset/**/*.tgz
-!dataset/**/*.csv
+dataset/text/documents/raw
