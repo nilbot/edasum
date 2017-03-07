@@ -156,3 +156,9 @@ ENV/
 .ropeproject
 
 share/
+
+# ignore raw text files
+dataset/**
+!dataset/**/README*
+!dataset/**/*.tgz
+!dataset/**/*.csv
