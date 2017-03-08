@@ -10,3 +10,5 @@ sklearn
 nltk
 pycorenlp
 sumy>=0.5.1
+memory_profiler
+line_profiler
