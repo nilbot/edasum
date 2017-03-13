@@ -1,14 +1,14 @@
 matplotlib
+numpy
 scipy
-numpy>=1.6.1
 pandas
 ggplot
 jupyter
 image
 wordcloud
-sklearn
 nltk
+scikit-learn
 pycorenlp
-sumy>=0.5.1
+sumy
 memory_profiler
 line_profiler
