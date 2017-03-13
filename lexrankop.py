@@ -63,16 +63,16 @@ class TSBase(object):
         self._wmd_byrow = None
         self._idf = None
         self._attr_dict = {
-            "idm":self._idm,
-            "ism":self._ism,
-            "world":self._world,
-            "world_words":self._world_words,
-            "word_words_set":self.world_words_set(),
-            "world_tf":self._world_tf,
-            "wmd":self._wmd,
-            "wmd_bycol":self._wmd_bycol,
-            "wmd_byrow":self._wmd_byrow,
-            "idf":self._idf,
+            "idm": self._idm,
+            "ism": self._ism,
+            "world": self._world,
+            "world_words": self._world_words,
+            "word_words_set": self.world_words_set(),
+            "world_tf": self._world_tf,
+            "wmd": self._wmd,
+            "wmd_bycol": self._wmd_bycol,
+            "wmd_byrow": self._wmd_byrow,
+            "idf": self._idf,
         }
 
     def build_internal(self, document_set, remove_stopwords=False):
@@ -98,12 +98,12 @@ class TSBase(object):
         self.save_attr(self._idf, "idf")
 
     def save_attr(self, attr, attr_str):
-        file = open("dataset/{0}.pkl".format(attr_str), 'wb')
+        file_to_be_saved = open("dataset/{0}.pkl".format(attr_str), 'wb')
         if any(x in ["matrix", "wmd"] for x in attr_str):
-            np.save(file, attr)
+            np.save(file_to_be_saved, attr)
         else:
-            pickle.dump(attr, file)
-        file.close()
+            pickle.dump(attr, file_to_be_saved)
+        file_to_be_saved.close()
 
     def load_attr(self, attr_str):
         if attr_str in self.valid_attr_names():
@@ -112,12 +112,15 @@ class TSBase(object):
                 raise ValueError('{0}.pkl file not found!'.format(attr_str))
             obj = open(filename, 'rb')
             if any(x in ["wmd"] for x in attr_str):
-                setattr(self, "_"+attr_str, np.load(obj))
+                setattr(self, "_" + attr_str, np.load(obj))
             else:
-                setattr(self,"_"+attr_str, pickle.load(obj))
+                setattr(self, "_" + attr_str, pickle.load(obj))
             obj.close()
 
     def load_internal(self):
+        """
+        local internal dataset for further production uses
+        """
         self.load_attr("idm")
 
         self.load_attr("ism")
@@ -141,6 +144,7 @@ class TSBase(object):
     """
 
     def valid_attr_names(self):
+        "return set of names of valid class attributes"
         return [
             "idm",
             "ism",
@@ -157,7 +161,6 @@ class TSBase(object):
         if string in self.valid_attr_names():
             return self._attr_dict[string]
 
-
     def world_words_set(self):
         if self._world_words_set is not None and len(
                 self._world_words_set) != 0:
@@ -169,7 +172,7 @@ class TSBase(object):
             self.load_attr("world_words")
 
     def wmd(self):
-        return self._world_words_document_matrix
+        return self._wmd
 
     def wmd_bycol(self):
         return self._wmd_bycol
@@ -250,8 +253,7 @@ class TSBase(object):
             word = self.world_words_set()[i]
             word_map2index[word] = i
 
-        self._world_words_document_matrix = sparse.dok_matrix(
-            (m, n), dtype=np.int)
+        self._wmd = sparse.dok_matrix((m, n), dtype=np.int)
 
         for doc_index, doc_tuple in enumerate(self._idm):
             tokens = self.tokenize(self.preprocess(doc_tuple[1]))
@@ -262,13 +264,12 @@ class TSBase(object):
             for token in set(tokens):
                 word_index = word_map2index[token]
                 freq = local_tf[token]
-                self._world_words_document_matrix[doc_index, word_index] = freq
+                self._wmd[doc_index, word_index] = freq
 
-        self.save_attr(self._world_words_document_matrix,
-                       "world_words_document_matrix")
+        self.save_attr(self._wmd, "wmd")
 
-        self._wmd_bycol = self._world_words_document_matrix.tocsc(True)
-        self._wmd_byrow = self._world_words_document_matrix.tocsr(True)
+        self._wmd_bycol = self._wmd.tocsc(True)
+        self._wmd_byrow = self._wmd.tocsr(True)
 
         print("at least by col and by row is generated")
 
@@ -294,8 +295,8 @@ def build_tsbase(small_test=False, value_test=False):
             DOC_PREFIX)  # all, caution, should use parallelism to speed up
 
     docs = deque()
-    for t in txts:
-        with open(os.path.join(DOC_PREFIX, t), 'r') as f:
+    for txt in txts:
+        with open(os.path.join(DOC_PREFIX, txt), 'r') as f:
             raw = f.read()
             doc_id = os.path.splitext(os.path.basename(f.name))[0]
             if small_test and value_test:
@@ -305,8 +306,8 @@ def build_tsbase(small_test=False, value_test=False):
         import cProfile
         cProfile.run('tsbase = TSBase(); tsbase.build_internal(docs, True)')
     else:
-        tsbase = TSBase()
-        tsbase.build_internal(docs, True)
+        tb = TSBase()
+        tb.build_internal(docs, True)
 
 
 def load_existing():
