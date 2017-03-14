@@ -89,8 +89,21 @@ class TSBase(object):
 
     def save_attr(self, attr, attr_str):
         file_to_be_saved = open("dataset/{0}.pkl".format(attr_str), 'wb')
-        if any(x in ["matrix", "wmd"] for x in attr_str):
-            np.save(file_to_be_saved, attr)
+        if any(x in ["wmd"] for x in attr_str):
+            if "by" in attr_str:
+                np.savez(
+                    file_to_be_saved,
+                    data=attr.data,
+                    indices=attr.indices,
+                    indptr=attr.indptr,
+                    shape=attr.shape)
+            else:
+                np.savez(
+                    file_to_be_saved,
+                    data=attr.data,
+                    row=attr.row,
+                    col=attr.col,
+                    shape=attr.shape)
         else:
             pickle.dump(attr, file_to_be_saved)
         file_to_be_saved.close()
@@ -100,12 +113,25 @@ class TSBase(object):
             filename = "dataset/{0}.pkl".format(attr_str)
             if not os.path.isfile(filename):
                 raise ValueError('{0}.pkl file not found!'.format(attr_str))
-            obj = open(filename, 'rb')
+            file_obj = open(filename, 'rb')
             if any(x in ["wmd"] for x in attr_str):
-                setattr(self, "_" + attr_str, np.load(obj))
+                loader = np.load(filename)
+                if "bycol" in filename:
+                    temp = sparse.csc_matrix(
+                        (loader['data'], loader['indices'], loader['indptr']),
+                        shape=loader['shape'])
+                elif "byrow" in filename:
+                    temp = sparse.csr_matrix(
+                        (loader['data'], loader['indices'], loader['indptr']),
+                        shape=loader['shape'])
+                else:
+                    temp = sparse.coo_matrix(
+                        (loader['data'], (loader['row'], loader['col'])),
+                        shape=loader['shape'])
+                setattr(self, "_" + attr_str, temp)
             else:
-                setattr(self, "_" + attr_str, pickle.load(obj))
-            obj.close()
+                setattr(self, "_" + attr_str, pickle.load(file_obj))
+            file_obj.close()
 
     def load_internal(self):
         """
