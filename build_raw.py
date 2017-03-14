@@ -1,6 +1,6 @@
 import os
-from collections import *
-from lexrankop import *
+from collections import deque
+from lexrankop import TSBase
 
 
 def build_tsbase(small_test=False, value_test=False):
@@ -13,6 +13,9 @@ def build_tsbase(small_test=False, value_test=False):
             DOC_PREFIX)  # all, caution, should use parallelism to speed up
 
     docs = deque()
+    n = len(txts)
+    print('collecting {0} documents...'.format(n))
+    counter = 1
     for t in txts:
         with open(os.path.join(DOC_PREFIX, t), 'r') as f:
             raw = f.read()
@@ -20,6 +23,9 @@ def build_tsbase(small_test=False, value_test=False):
             if small_test and value_test:
                 print(raw, "\n\n")
             docs.append((doc_id, raw))
+        counter = counter + 1
+        if counter % 2000 == 0:
+            print("read in number {0}th document.".format(counter))
     if small_test:
         import cProfile
         cProfile.run('tsbase = TSBase(); tsbase.build_internal(docs, True)')

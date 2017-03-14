@@ -1,8 +1,6 @@
-from collections import *
-from dataframe import *
+from collections import defaultdict, Counter
 
 import os
-import re
 import nltk
 import pickle
 import math
@@ -11,22 +9,6 @@ import glob
 from nltk.corpus import stopwords
 import numpy as np
 from scipy import sparse
-
-# %load_ext memory_profiler
-# %load_ext line_profiler
-
-# custom regex tokenizer pattern
-# caveat: orginal inclues
-"""
-| [][.,;"'?():_`-]    # these are separate tokens; includes ], [
-"""
-pattern = r'''(?x)          # set flag to allow verbose regexps
-    (?:[A-Z]\.)+        # abbreviations, e.g. U.S.A.
-  | \w+(?:-\w+)*        # words with optional internal hyphens
-  | \$?\d+(?:\.\d+)?%?  # currency and percentages, e.g. $12.40, 82%
-  | \.\.\.              # ellipsis
-  | \w+(?:'\w+)*        # words that have ' in between
-'''
 
 
 class TSBase(object):
@@ -51,20 +33,28 @@ class TSBase(object):
         # internal document mapping, implicitly index is the internal id, same for ism (sentences)
         self._idm = [document for document in document_set]
         self.save_attr(self._idm, "idm")
+        print('processed internal document mapping')
+
         self._ism = [(doc_id, sentence)
                      for doc_id, doc in enumerate(self._idm)
                      for sentence in nltk.sent_tokenize(doc[1])]
         self.save_attr(self._ism, "ism")
+        print('processed internal sentence document mapping')
+
         # build world (entire genre), and tf for genre
-        self.build_world()
-        self.save_attr(self._world, "world")
+        # self.build_world()
+        # self.save_attr(self._world, "world")
 
         self.build_world_words(remove_stopwords)
         self.save_attr(self._world_words, "world_words")
+        print('processed internal lemmatised word tokens for our genre')
+
         self.build_world_tf()
         self.save_attr(self._world_tf, "world_tf")
+        print('processed genre term frequency')
 
         # build world document matrix based on built words
+        print('preparing datastructure for genre idf calculation')
         self.prepare_for_idf()
         self.build_idf_only()
         self.save_attr(self._idf, "idf")
@@ -125,8 +115,6 @@ class TSBase(object):
 
         self.load_attr("ism")
 
-        self.load_attr("world")
-
         self.load_attr("world_words")
 
         self.load_attr("world_tf")
@@ -148,7 +136,6 @@ class TSBase(object):
         return [
             "idm",
             "ism",
-            "world",
             "world_words",
             "world_tf",
             "wmd",
@@ -184,12 +171,16 @@ class TSBase(object):
     builder methods
     """
 
-    def build_world(self):
-        self._world = " ".join([text[1] for text in self._idm])
-        self._world = " ".join(self._world.split())
+    # def build_world(self):
+    #     self._world = " ".join([text[1] for text in self._idm])
+    #     self._world = " ".join(self._world.split())
 
     def build_world_words(self, remove_stopwords=False):
-        self._world_words = self.tokenize(self.get_attr('world'))
+        listo = [self.tokenize(doc[1]) for doc in self._idm]
+        wnl = nltk.WordNetLemmatizer()
+        self._world_words = [
+            wnl.lemmatize(item) for lst in listo for item in lst
+        ]
 
         if remove_stopwords:
             self._world_words = self.nonstop(self._world_words)
@@ -198,7 +189,6 @@ class TSBase(object):
         """
         this is worlds word hash
         """
-        from collections import Counter
         self._world_tf = Counter(self.get_attr('world_words'))
 
     """
@@ -209,8 +199,8 @@ class TSBase(object):
         return nltk.word_tokenize(text)
 
     def nonstop(self, tokens):
-        cachedStopWords = stopwords.words("english")
-        return [token for token in tokens if token not in cachedStopWords]
+        cached_stopwords = stopwords.words("english")
+        return [token for token in tokens if token not in cached_stopwords]
 
     def hashing_vectorizer(self, text, N):
         """term frequency (local)"""
@@ -226,6 +216,8 @@ class TSBase(object):
         n = len(self.world_words_set())
         m = len(self._idm)
 
+        wnl = nltk.WordNetLemmatizer()
+
         word_map2index = defaultdict()
 
         for i in range(n):
@@ -235,13 +227,18 @@ class TSBase(object):
         temp_wmd = sparse.dok_matrix((m, n), dtype=np.int)
 
         for doc_index, doc_tuple in enumerate(self._idm):
-            tokens = self.tokenize(doc_tuple[1])
+            tokens = [wnl.lemmatize(t) for t in self.tokenize(doc_tuple[1])]
             if remove_stopwords:
                 tokens = self.nonstop(tokens)
             local_tf = Counter(tokens)
 
-            for token in set(tokens):
-                word_index = word_map2index[token]
+            for token in set(list(sorted(tokens))):
+                try:
+                    word_index = word_map2index[token]
+                except KeyError:
+                    print(
+                        "key: {0} from doc_tuple {1}".format(token, doc_tuple))
+                    exit(1)
                 freq = local_tf[token]
                 temp_wmd[doc_index, word_index] = freq
 
@@ -272,6 +269,9 @@ def sample_result(hotel_id, period):
     "sample summarisation result using lexrank"
     # tb = TSBase()
     # tb.load_internal()
+    # hotel_database = load_hotel_database()
+    # docs_ids = hotel_database.get_docs(hotel_id).subset(period)
+    # return tb.summarise(docs_ids)
 
 
 def load_existing():
