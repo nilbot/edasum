@@ -260,7 +260,7 @@ class TSBase(object):
             word = self.world_words_set()[i]
             word_map2index[word] = i
 
-        self._wmd = sparse.dok_matrix((m, n), dtype=np.int)
+        temp_wmd = sparse.dok_matrix((m, n), dtype=np.int)
 
         for doc_index, doc_tuple in enumerate(self._idm):
             tokens = self.tokenize(self.preprocess(doc_tuple[1]))
@@ -271,9 +271,9 @@ class TSBase(object):
             for token in set(tokens):
                 word_index = word_map2index[token]
                 freq = local_tf[token]
-                self._wmd[doc_index, word_index] = freq
+                temp_wmd[doc_index, word_index] = freq
 
-        self.save_attr(self._wmd, "wmd")
+        self.save_attr(temp_wmd.tocoo(), "wmd")
 
         self._wmd_bycol = self._wmd.tocsc(True)
         self._wmd_byrow = self._wmd.tocsr(True)
