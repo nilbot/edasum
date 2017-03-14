@@ -77,8 +77,9 @@ class TSBase(object):
         self.build_world()
         self.save_attr(self._world, "world")
 
-        self.build_world_tf(remove_stopwords)
+        self.build_world_words(remove_stopwords)
         self.save_attr(self._world_words, "world_words")
+        self.build_world_tf()
         self.save_attr(self._world_tf, "world_tf")
 
         # build world document matrix based on built words
@@ -187,8 +188,7 @@ class TSBase(object):
         if remove_stopwords:
             self._world_words = self.nonstop(self._world_words)
 
-    def build_world_tf(self, remove_stopwords):
-        self.build_world_words(remove_stopwords)
+    def build_world_tf(self):
         """
         this is worlds word hash
         """
