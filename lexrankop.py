@@ -261,8 +261,8 @@ class TSBase(object):
 
         print("at least by col and by row is generated")
 
-        self.save_attr(self._wmd_bycol, "wd_bycol")
-        self.save_attr(self._wmd_byrow, "wd_byrow")
+        self.save_attr(self._wmd_bycol, "wmd_bycol")
+        self.save_attr(self._wmd_byrow, "wmd_byrow")
 
         print("saving done.")
         # self._idf = defaultdict()
