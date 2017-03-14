@@ -192,7 +192,7 @@ class TSBase(object):
         this is worlds word hash
         """
         from collections import Counter
-        self._world_tf = Counter(self.world_words())
+        self._world_tf = Counter(self.get_attr('world_words'))
 
     def build_idf(self, remove_stopwords):
         print("under construction.")
@@ -230,7 +230,7 @@ class TSBase(object):
             x[h % N] += 1
         return x
 
-    def build_tf_only(self, remove_stopwords=True):
+    def prepare_for_idf(self, remove_stopwords=True):
         print("at least the rest works")
         n = len(self.world_words_set())
         m = len(self._idm)
@@ -265,37 +265,21 @@ class TSBase(object):
         self.save_attr(self._wmd_byrow, "wmd_byrow")
 
         print("saving done.")
-        # self._idf = defaultdict()
-        # for i in range(N):
-        #     word = self.world_words_set()[i]
-        #     n_i = self._world_words_document_matrix.getcol(i).count_nonzero()
-        #     self._idf[word] = math.log(m / float(n_i), 10)
+
+    def build_idf_only(self):
+        n = len(self.world_words_set())
+        m = len(self._idm)
+        self._idf = defaultdict()
+        for i in range(n):
+            word = self.world_words_set()[i]
+            n_i = self._wmd_bycol.getcol(i).count_nonzero()
+            self._idf[word] = math.log(m / float(n_i), 10)
 
 
-def build_tsbase(small_test=False, value_test=False):
-    # test for base
-
-    DOC_PREFIX = 'dataset/text/documents/raw'
-    if small_test:
-        txts = os.listdir(DOC_PREFIX)[100000:100100]
-    else:
-        txts = os.listdir(
-            DOC_PREFIX)  # all, caution, should use parallelism to speed up
-
-    docs = deque()
-    for txt in txts:
-        with open(os.path.join(DOC_PREFIX, txt), 'r') as f:
-            raw = f.read()
-            doc_id = os.path.splitext(os.path.basename(f.name))[0]
-            if small_test and value_test:
-                print(raw, "\n\n")
-            docs.append((doc_id, raw))
-    if small_test:
-        import cProfile
-        cProfile.run('tsbase = TSBase(); tsbase.build_internal(docs, True)')
-    else:
-        tb = TSBase()
-        tb.build_internal(docs, True)
+def sample_result(hotel_id, period):
+    "sample summarisation result using lexrank"
+    tb = TSBase()
+    tb.load_internal()
 
 
 def load_existing():
@@ -338,4 +322,4 @@ if __name__ == '__main__':
     #     print('need matrix to calculate idf')
     #     exit(1)
     if tsbase._idf is None:
-        tsbase.build_tf_only()
+        tsbase.prepare_for_idf()
