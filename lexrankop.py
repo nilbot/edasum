@@ -314,7 +314,12 @@ def load_existing():
         if attr in res.valid_attr_names():
             print("attr validated inside dict: {0}".format(attr))
             res.load_attr(attr)
-            print("obj loaded with length {0}".format(len(res.get_attr(attr))))
+            if "wmd" in attr:
+                print("obj loaded with length {0}".format(
+                    res.get_attr(attr).shape[0]))
+            else:
+                print("obj loaded with length {0}".format(
+                    len(res.get_attr(attr))))
 
     error = False
     for name in res.valid_attr_names():
