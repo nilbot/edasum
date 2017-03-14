@@ -195,14 +195,6 @@ class TSBase(object):
         from collections import Counter
         self._world_tf = Counter(self.get_attr('world_words'))
 
-    def build_idf(self, remove_stopwords):
-        print("under construction.")
-        # self._idf = defaultdict()
-        # for i in range(N):
-        #     word = self.world_words_set()[i]
-        #     n_i = self._world_words_document_matrix.getcol(i).count_nonzero()
-        #     self._idf[word] = math.log(m / float(n_i), 10)
-
     """
     utility methods
     """
