@@ -338,5 +338,5 @@ def load_existing():
     else:
         print("all done.")
         print("world_words len: {0}".format(len(res.get_attr('world_words'))))
-        print("world_words_set len: {0}".format(len(res.world_words_set()))
-        # return res
+        print("world_words_set len: {0}".format(len(res.world_words_set())))
+        return res
