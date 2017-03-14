@@ -302,7 +302,6 @@ def sample_result(hotel_id, period):
 
 
 def load_existing():
-    DOC_PREFIX = 'dataset/text/documents/raw'
     PICKLE_PREFIX = 'dataset'
     PICKLE_EXT = '.pkl'
     res = TSBase()
@@ -326,7 +325,9 @@ def load_existing():
             print("attr {0} not loaded, check load_existing".format(name))
             error = True
 
-    print("world_words: len{0}".format(len(res._world_words)))
+    print("world_words len: {0}".format(len(res.get_attr('world_words'))))
+    print("world_words_set len: {0}".format(
+        len(res.get_attr('world_words_set'))))
 
     if error:
         print("failed")
