@@ -183,7 +183,7 @@ class TSBase(object):
         self._world = preprocessed
 
     def build_world_words(self, remove_stopwords):
-        self._world_words = self.tokenize(self.get_attr('word'))
+        self._world_words = self.tokenize(self.get_attr('world'))
 
         if remove_stopwords:
             self._world_words = self.nonstop(self._world_words)
