@@ -82,7 +82,8 @@ class TSBase(object):
         self.save_attr(self._world_tf, "world_tf")
 
         # build world document matrix based on built words
-        self.build_idf(remove_stopwords)
+        self.prepare_for_idf()
+        self.build_idf_only()
         self.save_attr(self._idf, "idf")
 
     def save_attr(self, attr, attr_str):
@@ -181,7 +182,7 @@ class TSBase(object):
         self._world = preprocessed
 
     def build_world_words(self, remove_stopwords):
-        self._world_words = self.tokenize(self.world())
+        self._world_words = self.tokenize(self.get_attr('word'))
 
         if remove_stopwords:
             self._world_words = self.nonstop(self._world_words)
