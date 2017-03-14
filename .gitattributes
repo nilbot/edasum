@@ -6,3 +6,6 @@ dataset/pickle-checkpoint/world_tf.pkl filter=lfs diff=lfs merge=lfs -text
 dataset/pickle-checkpoint/world_words.pkl filter=lfs diff=lfs merge=lfs -text
 dataset/hotel/hotels.csv filter=lfs diff=lfs merge=lfs -text
 dataset/review_meta/review_meta.csv filter=lfs diff=lfs merge=lfs -text
+dataset/pickle-checkpoint/wmd.pkl filter=lfs diff=lfs merge=lfs -text
+dataset/pickle-checkpoint/wmd_bycol.pkl filter=lfs diff=lfs merge=lfs -text
+dataset/pickle-checkpoint/wmd_byrow.pkl filter=lfs diff=lfs merge=lfs -text
