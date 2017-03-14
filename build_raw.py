@@ -25,7 +25,7 @@ def build_tsbase(small_test=False, value_test=False):
         cProfile.run('tsbase = TSBase(); tsbase.build_internal(docs, True)')
     else:
         tb = TSBase()
-        tb.build_internal(docs, True)
+        tb.build_internal(docs)
 
 
 if __name__ == '__main__':

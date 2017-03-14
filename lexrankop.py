@@ -15,24 +15,6 @@ from scipy import sparse
 # %load_ext memory_profiler
 # %load_ext line_profiler
 
-# language lookup table
-knowledge = {}
-knowledge["haven't"] = "have not"
-knowledge["hasn't"] = "has not"
-knowledge["hadn't"] = "had not"
-knowledge["doesn't"] = "does not"
-knowledge["don't"] = "do not"
-knowledge["didn't"] = "did not"
-knowledge["couldn't"] = "could not"
-knowledge["mustn't"] = "must not"
-knowledge["can't"] = "can not"
-knowledge["hadn't"] = "had not"
-knowledge["won't"] = "will not"
-knowledge["wouldn't"] = "would not"
-knowledge["i'm"] = "i am"
-knowledge["it's"] = "it is"
-knowledge["let's"] = "let us"
-
 # custom regex tokenizer pattern
 # caveat: orginal inclues
 """
@@ -206,11 +188,7 @@ class TSBase(object):
         self._world = " ".join([text[1] for text in self._idm])
         self._world = " ".join(self._world.split())
 
-        preprocessed = self.preprocess(self._world)
-
-        self._world = preprocessed
-
-    def build_world_words(self, remove_stopwords):
+    def build_world_words(self, remove_stopwords=False):
         self._world_words = self.tokenize(self.get_attr('world'))
 
         if remove_stopwords:
@@ -228,15 +206,7 @@ class TSBase(object):
     """
 
     def tokenize(self, text):
-        return nltk.regexp_tokenize(text, pattern)
-
-    def preprocess(self, text):
-        text = text.lower()
-
-        # global static look up table for contraction must be present
-        replace_contraction = re.compile(r'\b(' + '|'.join(knowledge.keys()) +
-                                         r')\b')
-        return replace_contraction.sub(lambda x: knowledge[x.group()], text)
+        return nltk.word_tokenize(text)
 
     def nonstop(self, tokens):
         cachedStopWords = stopwords.words("english")
@@ -251,7 +221,7 @@ class TSBase(object):
             x[h % N] += 1
         return x
 
-    def prepare_for_idf(self, remove_stopwords=True):
+    def prepare_for_idf(self, remove_stopwords=False):
         print("at least the rest works")
         n = len(self.world_words_set())
         m = len(self._idm)
@@ -265,7 +235,7 @@ class TSBase(object):
         temp_wmd = sparse.dok_matrix((m, n), dtype=np.int)
 
         for doc_index, doc_tuple in enumerate(self._idm):
-            tokens = self.tokenize(self.preprocess(doc_tuple[1]))
+            tokens = self.tokenize(doc_tuple[1])
             if remove_stopwords:
                 tokens = self.nonstop(tokens)
             local_tf = Counter(tokens)
