@@ -332,22 +332,11 @@ def load_existing():
         if len(res.get_attr(attr)) == 0:
             print("attr {0} not loaded, check load_existing".format(name))
             error = True
-
-    print("world_words len: {0}".format(len(res.get_attr('world_words'))))
-    print("world_words_set len: {0}".format(
-        len(res.world_words_set()))
-
     if error:
         print("failed")
         exit(1)
-    print("all done.")
-    return res
-
-
-if __name__ == '__main__':
-    tsbase = load_existing()
-    # if not hasattr(tsbase, "_world_words_document_matrix"):
-    #     print('need matrix to calculate idf')
-    #     exit(1)
-    if tsbase._idf is None:
-        tsbase.prepare_for_idf()
+    else:
+        print("all done.")
+        print("world_words len: {0}".format(len(res.get_attr('world_words'))))
+        print("world_words_set len: {0}".format(len(res.world_words_set()))
+        # return res
