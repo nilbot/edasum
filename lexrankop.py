@@ -62,18 +62,6 @@ class TSBase(object):
         self._wmd_bycol = None
         self._wmd_byrow = None
         self._idf = None
-        self._attr_dict = {
-            "idm": self._idm,
-            "ism": self._ism,
-            "world": self._world,
-            "world_words": self._world_words,
-            "word_words_set": self.world_words_set(),
-            "world_tf": self._world_tf,
-            "wmd": self._wmd,
-            "wmd_bycol": self._wmd_bycol,
-            "wmd_byrow": self._wmd_byrow,
-            "idf": self._idf,
-        }
 
     def build_internal(self, document_set, remove_stopwords=False):
         """document_set is set or list of (review_id, review_text) tuple.
@@ -159,7 +147,7 @@ class TSBase(object):
 
     def get_attr(self, string):
         if string in self.valid_attr_names():
-            return self._attr_dict[string]
+            return getattr(self, '_' + string)
 
     def world_words_set(self):
         if self._world_words_set is not None and len(
@@ -325,17 +313,14 @@ def load_existing():
             print("attr validated inside dict: {0}".format(attr))
             res.load_attr(attr)
             print("obj loaded with length {0}".format(len(res.get_attr(attr))))
-            res.attributes_dict()[attr] = obj
-            print("length for attr after load: {0}".format(
-                len(res.attributes_dict()[attr])))
 
     error = False
-    for name, attr in res.attributes_dict().items():
-        if attr is None:
+    for name in res.valid_attr_names():
+        if res.get_attr(attr) is None:
             print("attr {0} is None, check constructor".format(name))
             error = True
-        if len(attr) == 0:
-            print("attr {0} not loaded, check load_existing".formt(name))
+        if len(res.get_attr(attr)) == 0:
+            print("attr {0} not loaded, check load_existing".format(name))
             error = True
 
     print("world_words: len{0}".format(len(res._world_words)))
