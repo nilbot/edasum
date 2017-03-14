@@ -273,7 +273,8 @@ class TSBase(object):
                 freq = local_tf[token]
                 temp_wmd[doc_index, word_index] = freq
 
-        self.save_attr(temp_wmd.tocoo(), "wmd")
+        self._wmd = temp_wmd.tocoo()
+        self.save_attr(self._wmd, "wmd")
 
         self._wmd_bycol = self._wmd.tocsc(True)
         self._wmd_byrow = self._wmd.tocsr(True)
