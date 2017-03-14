@@ -297,8 +297,8 @@ class TSBase(object):
 
 def sample_result(hotel_id, period):
     "sample summarisation result using lexrank"
-    tb = TSBase()
-    tb.load_internal()
+    # tb = TSBase()
+    # tb.load_internal()
 
 
 def load_existing():
