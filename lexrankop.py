@@ -91,6 +91,7 @@ class TSBase(object):
         file_to_be_saved = open("dataset/{0}.pkl".format(attr_str), 'wb')
         if any(x in ["wmd"] for x in attr_str):
             if "by" in attr_str:
+                # csr and csc
                 np.savez(
                     file_to_be_saved,
                     data=attr.data,
@@ -98,6 +99,7 @@ class TSBase(object):
                     indptr=attr.indptr,
                     shape=attr.shape)
             else:
+                # coo (dok converted)
                 np.savez(
                     file_to_be_saved,
                     data=attr.data,
