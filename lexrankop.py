@@ -41,10 +41,6 @@ class TSBase(object):
         self.save_attr(self._ism, "ism")
         print('processed internal sentence document mapping')
 
-        # build world (entire genre), and tf for genre
-        # self.build_world()
-        # self.save_attr(self._world, "world")
-
         self.build_world_words(remove_stopwords)
         self.save_attr(self._world_words, "world_words")
         print('processed internal lemmatised word tokens for our genre')
@@ -170,10 +166,6 @@ class TSBase(object):
     """
     builder methods
     """
-
-    # def build_world(self):
-    #     self._world = " ".join([text[1] for text in self._idm])
-    #     self._world = " ".join(self._world.split())
 
     def build_world_words(self, remove_stopwords=False):
         listo = [self.tokenize(doc[1]) for doc in self._idm]
