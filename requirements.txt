@@ -12,3 +12,4 @@ pycorenlp
 sumy
 memory_profiler
 line_profiler
+visdom
